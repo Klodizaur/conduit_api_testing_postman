@@ -19,20 +19,25 @@ jobs:
       - name: Set up Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: '16'  # Update to Node.js version 16 or higher
+          node-version: '16'
 
       - name: Install Newman
-        run: |
-          npm install -g newman newman-reporter-htmlextra
+        run: npm install -g newman
 
-      - name: Run Postman collection with Newman
+      - name: Run Postman collection with Newman and export JUnit results
         run: |
           newman run "https://api.getpostman.com/collections/36722846-8fc2f348-1e2b-404a-87fa-b815e7f76275?apikey=${{ secrets.POSTMAN_API_KEY }}" \
-          --reporters cli,htmlextra \
-          --reporter-htmlextra-export "./newman-report.html"
+          --reporters cli,junit \
+          --reporter-junit-export "newman-junit-report.xml"
 
-      - name: Upload Newman HTML report
+      - name: Upload JUnit report
         uses: actions/upload-artifact@v3
         with:
-          name: newman-report-html
-          path: ./newman-report.html
+          name: newman-junit-report
+          path: newman-junit-report.xml
+
+      - name: Publish test results with CTRf
+        uses: ctrf-io/github-actions-test-reporter-ctrf@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          results: newman-junit-report.xml
