@@ -45,12 +45,6 @@ jobs:
         run: |
           junit-to-ctrf postman-report.xml --output ctrf-report.json --tool Newman
 
-      - name: Publish AI Test Summary Results
-        run: |
-          npx github-actions-ctrf ai ctrf-report.json > ai-summary.txt
-          echo "====== CTRF AI Test Summary ======"
-          cat ai-summary.txt
-
       - name: Publish Test Summary Results
         run: |
           npx github-actions-ctrf summary ctrf-report.json > summary.txt
