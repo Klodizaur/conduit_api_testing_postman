@@ -21,16 +21,12 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Install Postman CLI
-        run: |
-          curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
-
-      - name: Login to Postman CLI
-        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+      - name: Install Newman
+        run: npm install -g newman
 
       - name: Run API tests
         run: |
-          postman collection run "36722846-8fc2f348-1e2b-404a-87fa-b815e7f76275" --reporter-junit-export postman-report.xml
+          newman run "36722846-8fc2f348-1e2b-404a-87fa-b815e7f76275" --reporters junit --reporter-junit-export postman-report.xml
 
       - name: Install CTRF Reporter
         run: npm install -g @ctrf/cli
