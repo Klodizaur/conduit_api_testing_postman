@@ -1,4 +1,4 @@
-name: Conduit API Testing with Newman
+name: Conduit API Testing with Postman
 
 on:
   push:
@@ -19,7 +19,7 @@ jobs:
       - name: Set up Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '16'  # Update to Node.js version 16 or higher
 
       - name: Install Newman
         run: |
