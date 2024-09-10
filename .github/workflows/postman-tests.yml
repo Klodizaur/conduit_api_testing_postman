@@ -1,4 +1,4 @@
-name: Conduit API Testing with Postman
+name: Conduit API Testing with Newman
 
 on:
   push:
@@ -16,19 +16,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Postman CLI
+      - name: Set up Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+
+      - name: Install Newman
         run: |
-          curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+          npm install -g newman newman-reporter-htmlextra
 
-      - name: Login to Postman CLI
-        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
-
-      - name: Run API tests and capture output
+      - name: Run Postman collection with Newman
         run: |
-          postman collection run "36722846-8fc2f348-1e2b-404a-87fa-b815e7f76275" > postman-test-results.txt
+          newman run "https://api.getpostman.com/collections/36722846-8fc2f348-1e2b-404a-87fa-b815e7f76275?apikey=${{ secrets.POSTMAN_API_KEY }}" \
+          --reporters cli,htmlextra \
+          --reporter-htmlextra-export "./newman-report.html"
 
-      - name: Upload Postman test results
+      - name: Upload Newman HTML report
         uses: actions/upload-artifact@v3
         with:
-          name: postman-test-results
-          path: postman-test-results.txt
+          name: newman-report-html
+          path: ./newman-report.html
