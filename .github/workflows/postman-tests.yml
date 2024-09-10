@@ -16,37 +16,30 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.js environment
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '16'
 
-      - name: Install Newman and JUnit to CTRF
+      - name: Install Postman CLI
         run: |
-          npm install -g newman
-          npm install -g junit-to-ctrf
+          curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
 
-      - name: Run Postman collection with Newman
+      - name: Login to Postman CLI
+        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+
+      - name: Run API tests
         run: |
-          newman run "https://api.getpostman.com/collections/36722846-8fc2f348-1e2b-404a-87fa-b815e7f76275?apikey=${{ secrets.POSTMAN_API_KEY }}" \
-          --reporters cli,junit \
-          --reporter-junit-export "newman-junit-report.xml"
-        continue-on-error: true 
+          postman collection run "36722846-8fc2f348-1e2b-404a-87fa-b815e7f76275" --reporters junit --reporter-junit-export postman-report.xml
 
-      - name: Convert JUnit report to CTRf JSON
-        if: always()
-        run: |
-          junit-to-ctrf newman-junit-report.xml ctrf/ctrf-report.json
+      - name: Install CTRF Reporter
+        uses: ctrf-io/github-actions-test-reporter-ctrf@v1
+        with:
+          path: postman-report.xml
+          fail-tests: false 
 
-      - name: Upload CTRf JSON report
-        if: always()
+      - name: Upload Test Results
         uses: actions/upload-artifact@v3
         with:
-          name: newman-ctrf-report
-          path: ctrf/ctrf-report.json
-
-      - name: Publish Test Results with CTRf
-        if: always()
-        run: npx github-actions-ctrf ctrf/ctrf-report.json
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: postman-test-results
+          path: postman-report.xml
