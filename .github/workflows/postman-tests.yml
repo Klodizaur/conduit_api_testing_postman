@@ -40,9 +40,9 @@ jobs:
 
       - name: Convert JUnit to CTRF
         run: |
-          junit-to-ctrf --input postman-report.xml --output ctrf-report.json
+          junit-to-ctrf postman-report.xml --output ctrf-report.json --tool Newman
 
-      - name: Publish CTRF Test Summary Results
+      - name: Publish Test Summary
         run: npx github-actions-ctrf summary ctrf-report.json
         if: always()
 
