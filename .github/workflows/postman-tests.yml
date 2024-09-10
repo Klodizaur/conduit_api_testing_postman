@@ -26,7 +26,7 @@ jobs:
 
       - name: Run API tests
         run: |
-          newman run "36722846-8fc2f348-1e2b-404a-87fa-b815e7f76275" --reporters junit --reporter-junit-export postman-report.xml
+          newman run "https://api.postman.com/collections/36722846-8fc2f348-1e2b-404a-87fa-b815e7f76275?access_key=${{ secrets.POSTMAN_API_KEY }}" --reporters junit --reporter-junit-export postman-report.xml
 
       - name: Install CTRF Reporter
         run: npm install -g @ctrf/cli
