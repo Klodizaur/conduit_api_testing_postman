@@ -39,31 +39,31 @@ jobs:
       - name: Run API tests
         run: |
           newman run collection.json --reporters junit --reporter-junit-export postman-report.xml
-        continue-on-error: true  
+        continue-on-error: true 
 
       - name: Convert JUnit to CTRF
         run: |
           junit-to-ctrf postman-report.xml --output ctrf-report.json --tool Newman
 
-      - name: Publish General Test Summary
+      - name: Publish Test Summary Results
         run: |
           npx github-actions-ctrf summary ctrf-report.json > summary.txt
           echo "====== CTRF General Test Summary ======"
           cat summary.txt
 
-      - name: Publish AI Test Summary
+      - name: Publish AI Test Summary Results
         run: |
           npx github-actions-ctrf ai ctrf-report.json > ai-summary.txt
           echo "====== CTRF AI Test Summary ======"
           cat ai-summary.txt
 
-      - name: Publish Failed Test Summary
+      - name: Publish Failed Test Summary Results
         run: |
           npx github-actions-ctrf failed ctrf-report.json > failed-summary.txt
           echo "====== CTRF Failed Test Summary ======"
           cat failed-summary.txt
 
-      - name: Publish Detailed Test Summary
+      - name: Publish CTRF Detailed Test Summary Results
         run: |
           npx github-actions-ctrf tests ctrf-report.json > detailed-summary.txt
           echo "====== CTRF Detailed Test Summary ======"
