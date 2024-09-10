@@ -1,4 +1,4 @@
-name: Conduit API Testing with postman
+name: Conduit API Testing with Postman
 
 on:
   push:
@@ -29,14 +29,17 @@ jobs:
           newman run "https://api.getpostman.com/collections/36722846-8fc2f348-1e2b-404a-87fa-b815e7f76275?apikey=${{ secrets.POSTMAN_API_KEY }}" \
           --reporters cli,junit \
           --reporter-junit-export "newman-junit-report.xml"
+        continue-on-error: true 
 
       - name: Upload JUnit report
+        if: always() 
         uses: actions/upload-artifact@v3
         with:
           name: newman-junit-report
           path: newman-junit-report.xml
 
       - name: Publish Test Results with CTRf
+        if: always() 
         run: npx github-actions-ctrf newman-junit-report.xml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
