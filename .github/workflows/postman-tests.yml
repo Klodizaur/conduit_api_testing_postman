@@ -23,19 +23,12 @@ jobs:
       - name: Login to Postman CLI
         run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
 
-      - name: Run API tests and export results
+      - name: Run API tests and capture output
         run: |
-          postman collection run "36722846-8fc2f348-1e2b-404a-87fa-b815e7f76275" --reporter-json-export "./postman-results.json"
+          postman collection run "36722846-8fc2f348-1e2b-404a-87fa-b815e7f76275" > postman-output.log
 
-      - name: Install Newman Reporter
-        run: npm install -g newman-reporter-htmlextra
-
-      - name: Generate HTML report using Newman Reporter
-        run: |
-          newman-reporter-htmlextra --collection "./postman-results.json" --reporter-htmlextra-export "./postman-report.html"
-
-      - name: Upload HTML report
+      - name: Upload Postman output as artifact
         uses: actions/upload-artifact@v3
         with:
-          name: postman-report-html
-          path: ./postman-report.html
+          name: postman-output-log
+          path: postman-output.log
