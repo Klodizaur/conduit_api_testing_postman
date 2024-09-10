@@ -1,4 +1,4 @@
-name: Conduit API Testing with Postman
+name: Conduit API Testing with postman
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
       - name: Install Newman
         run: npm install -g newman
 
-      - name: Run Postman collection with Newman and export JUnit results
+      - name: Run Postman collection with Newman
         run: |
           newman run "https://api.getpostman.com/collections/36722846-8fc2f348-1e2b-404a-87fa-b815e7f76275?apikey=${{ secrets.POSTMAN_API_KEY }}" \
           --reporters cli,junit \
@@ -36,8 +36,7 @@ jobs:
           name: newman-junit-report
           path: newman-junit-report.xml
 
-      - name: Publish test results with CTRf
-        uses: ctrf-io/github-actions-test-reporter-ctrf@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          results: newman-junit-report.xml
+      - name: Publish Test Results with CTRf
+        run: npx github-actions-ctrf newman-junit-report.xml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
