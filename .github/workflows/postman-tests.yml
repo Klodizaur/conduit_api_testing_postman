@@ -23,6 +23,17 @@ jobs:
       - name: Login to Postman CLI
         run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
 
-      - name: Run API tests
+      - name: Install Newman
+        run: npm install -g newman
+
+      - name: Run API tests with Newman
         run: |
-          postman collection run "36722846-8fc2f348-1e2b-404a-87fa-b815e7f76275"
+          newman run "36722846-8fc2f348-1e2b-404a-87fa-b815e7f76275" \
+          --reporters cli,htmlextra \
+          --reporter-htmlextra-export "./newman-report.html"
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v3
+        with:
+          name: newman-report-html
+          path: ./newman-report.html
