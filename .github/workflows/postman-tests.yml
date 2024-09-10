@@ -26,27 +26,27 @@ jobs:
           npm install -g newman
           npm install -g junit-to-ctrf
 
-      - name: Run Postman collection with Newman and export JUnit results
+      - name: Run Postman collection with Newman
         run: |
           newman run "https://api.getpostman.com/collections/36722846-8fc2f348-1e2b-404a-87fa-b815e7f76275?apikey=${{ secrets.POSTMAN_API_KEY }}" \
           --reporters cli,junit \
           --reporter-junit-export "newman-junit-report.xml"
-        continue-on-error: true
+        continue-on-error: true 
 
       - name: Convert JUnit report to CTRf JSON
-        if: always()  # Run even if the tests fail
+        if: always()
         run: |
-          junit-to-ctrf newman-junit-report.xml newman-ctrf-report.json
+          junit-to-ctrf newman-junit-report.xml ctrf/ctrf-report.json
 
       - name: Upload CTRf JSON report
         if: always()
         uses: actions/upload-artifact@v3
         with:
           name: newman-ctrf-report
-          path: newman-ctrf-report.json
+          path: ctrf/ctrf-report.json
 
       - name: Publish Test Results with CTRf
         if: always()
-        run: npx github-actions-ctrf newman-ctrf-report.json
+        run: npx github-actions-ctrf ctrf/ctrf-report.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
