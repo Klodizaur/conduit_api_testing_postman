@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '16'
 
       - name: Install Postman CLI
         run: |
@@ -30,7 +30,7 @@ jobs:
 
       - name: Run API tests
         run: |
-          postman collection run "36722846-8fc2f348-1e2b-404a-87fa-b815e7f76275" --reporters junit --reporter-junit-export postman-report.xml
+          postman collection run "36722846-8fc2f348-1e2b-404a-87fa-b815e7f76275" --reporter-junit-export postman-report.xml
 
       - name: Install CTRF Reporter
         run: npm install -g @ctrf/cli
