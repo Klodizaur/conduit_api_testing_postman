@@ -19,12 +19,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '18'
 
       - name: Install Newman
         run: npm install -g newman
 
-      - name: Download Postman Collection
+      - name: Install junit-to-ctrf
+        run: npm install -g junit-to-ctrf
+
+      - name: Get Postman Collection
         run: |
           curl --location --request GET "https://api.postman.com/collections/36722846-8fc2f348-1e2b-404a-87fa-b815e7f76275" \
           --header "X-Api-Key: ${{ secrets.POSTMAN_API_KEY }}" \
@@ -33,16 +36,18 @@ jobs:
       - name: Run API tests
         run: |
           newman run collection.json --reporters junit --reporter-junit-export postman-report.xml
-        continue-on-error: true 
+        continue-on-error: true  
 
-      - name: Install CTRF Reporter
-        run: npm install -g @ctrf/cli
+      - name: Convert JUnit to CTRF
+        run: |
+          junit-to-ctrf --input postman-report.xml --output ctrf-report.json
 
-      - name: Run CTRF Test Reporter
-        run: ctrf postman-report.xml
+      - name: Publish CTRF Test Summary Results
+        run: npx github-actions-ctrf summary ctrf-report.json
+        if: always()
 
-      - name: Upload Test Results
-        uses: actions/upload-artifact@v3
+      - name: Upload CTRF Report
+        uses: actions/upload-artifact@v4
         with:
-          name: postman-test-results
-          path: postman-report.xml
+          name: ctrf-report
+          path: ctrf-report.json
