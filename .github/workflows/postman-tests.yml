@@ -23,12 +23,12 @@ jobs:
       - name: Login to Postman CLI
         run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
 
-      - name: Run API tests and capture output
+      - name: Run API tests and save output to a file
         run: |
-          postman collection run "36722846-8fc2f348-1e2b-404a-87fa-b815e7f76275" > postman-output.log
+          postman collection run "36722846-8fc2f348-1e2b-404a-87fa-b815e7f76275" --reporters cli --reporter-cli-no-banner > postman-test-results.txt
 
-      - name: Upload Postman output as artifact
+      - name: Upload Postman test results
         uses: actions/upload-artifact@v3
         with:
-          name: postman-output-log
-          path: postman-output.log
+          name: postman-test-results
+          path: postman-test-results.txt
